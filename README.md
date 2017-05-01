@@ -1,37 +1,150 @@
-## Welcome to GitHub Pages
+<html>
 
-You can use the [editor on GitHub](https://github.com/Tscholten1/mapwurks.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+<head>
+    <meta charset=utf-8 />
+    <title>Lab 07 Template</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
 
-### Markdown
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: whitesmoke;
+            font-family: "Noto Sans", sans-serif;
+            color: #3d3d3d;
+        }
+        
+        section {
+            width: 960px;
+            margin: 20px auto;
+        }
+        
+        h1 {
+            width: 960px;
+            margin: 20px auto;
+            font-family: "Lora", serif;
+            letter-spacing: .04em;
+        }
+        
+        h2 {
+            font-family: "Lora", serif;
+            letter-spacing: .04em;
+        }
+        
+        p {
+            font-size: 1em;
+            line-height: 1.5em;
+        }
+        
+        a {
+            color: #005daa;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin: 10px 0
+        }
+        
+        #map {
+            width: 960px;
+            height: 540px;
+            margin: 10px auto;
+            border: 2px solid #d3d3d3;
+        }
+    </style>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
+</head>
 
-- Bulleted
-- List
+<body>
+    <h1>Where are you in relation to the amazing Red Iguana restaurant?.</h1>
 
-1. Numbered
-2. List
+    <div id='map'></div>
 
-**Bold** and _Italic_ and `Code` text
+    <section>
+        <h2>about this map</h2>
 
-[Link](url) and ![Image](src)
-```
+        <p>Map authored by Tom Scholten, December, 2016</p>
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+        <p>Additional information about <a href="#">the data</a> and map goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis urna magna, maximus nec laoreet sit amet, dictum ultricies nibh. Ut id auctor lacus. Nam a dolor et justo luctus luctus. </p>
 
-### Jekyll Themes
+    </section>
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Tscholten1/mapwurks.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+    <script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+    <script>
+        // map.addLayer(tiles);
+        var options = {
+            center: [40.7533, -111.9448],
+            zoom: 12
+        }
+        var map = L.map('map', options);
+        var Esri_WorldStreetMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 17,
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+        });
+        map.addLayer(Esri_WorldStreetMap);
+        var redIguana = L.latLng(40.7718, -111.9124);
+        console.log("The center of the map is the Red Iguana Restaurant", redIguana);
+        map.on('click', function (e) {
+            var newlatlng = e.latlng;
+            map.setView(newlatlng, 11);
+            console.log("The new center of the map is", newlatlng);
+            var distance = newlatlng.distanceTo(redIguana);
+            console.log("The distance in meters between the new center of the map and the Red Iguana is", distance, "meters");
+            var southWest = map.getBounds().getSouthWest()
+            console.log("The southwest bounding coordinates for the new scale level are", southWest);
+            var distanceRedIguana = southWest.distanceTo(redIguana);
+            console.log("The distance in meters between the southwest corner of the map and the Red Iguana is", distanceRedIguana, "meters")
+        });
+        L.marker(redIguana, {
+            icon: L.icon({
+                iconUrl: 'red_iguana.png',
+                iconSize: [40, 36]
+            })
+        }).addTo(map);
+       var newMarker;
+        map.on('click', function (e) {
+                    if (map.hasLayer(newMarker)) {
+                        +map.removeLayer(newMarker);
+                    }
+                    var clickLocation = e.latlng;
+                    var distance = clickLocation.distanceTo(redIguana) / 1000;
+                    newMarker = L.marker(e.latlng, {
+                        draggable: true
+                    }).addTo(map);
+                    var popup = buildPopup(distance);
+                    newMarker.bindPopup(popup).openPopup();
+                    newMarker.on('dragend', function (e) {
+                        var newPosition = newMarker.getLatLng();
+                        var newDistance = newPosition.distanceTo(redIguana) / 1000;
+                        var popup = buildPopup(newDistance);
+                        
+                        newMarker.bindPopup(popup).openPopup();
+//                       
+                    }) 
+        })
+                    function buildPopup(distance) {
+                        return 'Distance to Red Iguana: ' + distance.toLocaleString() + 'km';
+                    } 
+    
+    </script>
 
-### Support or Contact
+</body>
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+</html>
