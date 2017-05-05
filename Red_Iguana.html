@@ -126,7 +126,8 @@
                     var clickLocation = e.latlng;
                     var distance = clickLocation.distanceTo(redIguana) / 1000;
                     newMarker = L.marker(e.latlng, {
-                        draggable: true
+                        draggable: true,
+                        opacity: o.8
                     }).addTo(map);
                     var popup = buildPopup(distance);
                     newMarker.bindPopup(popup).openPopup();
