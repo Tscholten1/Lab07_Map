@@ -1,7 +1,6 @@
 <html>
 
 <head>
-    <meta charset=utf-8 />
     <title>Lab 07 Template</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
@@ -68,11 +67,10 @@
     </style>
 
 
-
 </head>
 
 <body>
-    <h1>Where are you in relation to the amazing Red Iguana restaurant?.</h1>
+    <h1>Where are you in relation to Mapleton Barn?</h1>
 
     <div id='map'></div>
 
@@ -90,7 +88,7 @@
     <script>
         // map.addLayer(tiles);
         var options = {
-            center: [40.7533, -111.9448],
+            center: [43.190831, -88.457489],
             zoom: 12
         }
         var map = L.map('map', options);
@@ -99,22 +97,22 @@
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
         });
         map.addLayer(Esri_WorldStreetMap);
-        var redIguana = L.latLng(40.7718, -111.9124);
-        console.log("The center of the map is the Red Iguana Restaurant", redIguana);
+        var MapletonBarn = L.latLng(43.190831, -88.457489);
+        console.log("The center of the map is the Mapleton Barn", MapletonBarn);
         map.on('click', function (e) {
             var newlatlng = e.latlng;
             map.setView(newlatlng, 11);
             console.log("The new center of the map is", newlatlng);
-            var distance = newlatlng.distanceTo(redIguana);
-            console.log("The distance in meters between the new center of the map and the Red Iguana is", distance, "meters");
+            var distance = newlatlng.distanceTo(MapletonBarn);
+            console.log("The distance in meters between the new center of the map and the Mapleton Barn is", distance, "meters");
             var southWest = map.getBounds().getSouthWest()
             console.log("The southwest bounding coordinates for the new scale level are", southWest);
-            var distanceRedIguana = southWest.distanceTo(redIguana);
-            console.log("The distance in meters between the southwest corner of the map and the Red Iguana is", distanceRedIguana, "meters")
+            var distanceMapletonBarn = southWest.distanceTo(MapletonBarn);
+            console.log("The distance in meters between the southwest corner of the map and the Mapleton Barn is", distanceMapletonBarn, "meters")
         });
-        L.marker(redIguana, {
+        L.marker(MapletonBarn, {
             icon: L.icon({
-                iconUrl: 'red_iguana.png',
+                iconUrl: 'Mapleton Barn.png',
                 iconSize: [40, 36]
             })
         }).addTo(map);
@@ -124,16 +122,16 @@
                         +map.removeLayer(newMarker);
                     }
                     var clickLocation = e.latlng;
-                    var distance = clickLocation.distanceTo(redIguana) / 1000;
+                    var distance = clickLocation.distanceTo(MapletonBarn) / 1000;
                     newMarker = L.marker(e.latlng, {
                         draggable: true,
-                        opacity: o.8
+                        opacity: 0.9
                     }).addTo(map);
                     var popup = buildPopup(distance);
                     newMarker.bindPopup(popup).openPopup();
                     newMarker.on('dragend', function (e) {
                         var newPosition = newMarker.getLatLng();
-                        var newDistance = newPosition.distanceTo(redIguana) / 1000;
+                        var newDistance = newPosition.distanceTo(MapletonBarn) / 1000;
                         var popup = buildPopup(newDistance);
                         
                         newMarker.bindPopup(popup).openPopup();
@@ -141,7 +139,7 @@
                     }) 
         })
                     function buildPopup(distance) {
-                        return 'Distance to Red Iguana: ' + distance.toLocaleString() + 'km';
+                        return 'Distance to Mapleton Barn: ' + distance.toLocaleString() + 'km';
                     } 
     
     </script>
